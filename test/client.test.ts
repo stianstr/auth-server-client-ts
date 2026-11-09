@@ -409,6 +409,33 @@ test('logout honors a custom logoutPath and redirectUri', () => {
   eq(parseQuery(fakeWindow.location.href)['redirect_uri'], 'https://elsewhere.example.com/bye')
 })
 
+test('logout ignores a non-string argument and falls back to origin', () => {
+  const { client } = newClient()
+  const event = { type: 'click', target: {} }
+  ;(client as unknown as { logout: (e: unknown) => void }).logout(event)
+  const url = fakeWindow.location.href
+  ok(url.indexOf(AUTH_URL + '/api/auth/logout?') === 0, 'navigates to logout: ' + url)
+  eq(parseQuery(url)['redirect_uri'], 'https://app.example.com')
+})
+
+test('getUserInfo ignores a non-string argument and uses the stored token', async () => {
+  const { client, storage } = newClient()
+  storage.setItem('auth_access_token', 'at-xyz')
+  respondWith({ ok: true, status: 200, body: JSON.stringify(USERINFO_BODY) })
+  const event = { type: 'click', target: {} }
+  await (client as unknown as { getUserInfo: (t: unknown) => Promise<UserInfo> }).getUserInfo(event)
+  eq(lastRequest().headers['Authorization'], 'Bearer at-xyz')
+})
+
+test('revoke ignores a non-string argument and uses the stored refresh token', async () => {
+  const { client, storage } = newClient()
+  storage.setItem('auth_refresh_token', 'rt-abc')
+  respondWith({ ok: true, status: 200, body: '' })
+  const event = { type: 'click', target: {} }
+  await (client as unknown as { revoke: (t: unknown) => Promise<boolean> }).revoke(event)
+  eq(parseQuery('?' + (lastRequest().body || ''))['token'], 'rt-abc')
+})
+
 test('storageKeyPrefix isolates two clients on one origin', () => {
   const storageA = new MemoryStorage()
   const storageB = new MemoryStorage()

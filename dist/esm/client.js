@@ -280,7 +280,7 @@ export function createAuthClient(config) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        token = accessToken || getAccessToken();
+                        token = typeof accessToken === 'string' && accessToken.length > 0 ? accessToken : getAccessToken();
                         if (!token) {
                             throw new Error('No access token available');
                         }
@@ -302,11 +302,12 @@ export function createAuthClient(config) {
     }
     function revoke(token) {
         return __awaiter(this, void 0, void 0, function () {
-            var target, body, response;
+            var stored, target, body, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        target = token || getRefreshToken();
+                        stored = getRefreshToken();
+                        target = typeof token === 'string' && token.length > 0 ? token : stored;
                         if (!target)
                             return [2 /*return*/, false];
                         body = new URLSearchParams({
@@ -327,7 +328,8 @@ export function createAuthClient(config) {
     }
     function logout(redirectUri) {
         clearTokens();
-        var target = redirectUri || (typeof window !== 'undefined' && window.location ? window.location.origin : '');
+        var fallback = typeof window !== 'undefined' && window.location ? window.location.origin : '';
+        var target = typeof redirectUri === 'string' && redirectUri.length > 0 ? redirectUri : fallback;
         var params = new URLSearchParams({ redirect_uri: target });
         navigate(authServerUrl + logoutPath + '?' + params.toString());
     }

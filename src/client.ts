@@ -274,7 +274,7 @@ export function createAuthClient(config: AuthClientConfig): AuthClient {
   }
 
   async function getUserInfo(accessToken?: string): Promise<UserInfo> {
-    const token = accessToken || getAccessToken()
+    const token = typeof accessToken === 'string' && accessToken.length > 0 ? accessToken : getAccessToken()
     if (!token) {
       throw new Error('No access token available')
     }
@@ -292,7 +292,8 @@ export function createAuthClient(config: AuthClientConfig): AuthClient {
   }
 
   async function revoke(token?: string): Promise<boolean> {
-    const target = token || getRefreshToken()
+    const stored = getRefreshToken()
+    const target = typeof token === 'string' && token.length > 0 ? token : stored
     if (!target) return false
 
     const body = new URLSearchParams({
@@ -311,7 +312,8 @@ export function createAuthClient(config: AuthClientConfig): AuthClient {
 
   function logout(redirectUri?: string): void {
     clearTokens()
-    const target = redirectUri || (typeof window !== 'undefined' && window.location ? window.location.origin : '')
+    const fallback = typeof window !== 'undefined' && window.location ? window.location.origin : ''
+    const target = typeof redirectUri === 'string' && redirectUri.length > 0 ? redirectUri : fallback
     const params = new URLSearchParams({ redirect_uri: target })
     navigate(authServerUrl + logoutPath + '?' + params.toString())
   }

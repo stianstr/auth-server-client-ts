@@ -1,6 +1,6 @@
 {
   "name": "auth-server-client-ts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "auth-server-client for typescript",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
