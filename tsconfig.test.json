@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "types": ["node"],
+    "outDir": "test-build"
+  },
+  "include": ["test/**/*.ts", "src/**/*.ts"]
+}

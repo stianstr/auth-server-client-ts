@@ -1,0 +1,23 @@
+{
+  "name": "auth-server-client-ts",
+  "version": "0.1.0",
+  "description": "auth-server-client for typescript",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build-cjs.json && tsc -p tsconfig.build-esm.json",
+    "test": "tsc -p tsconfig.test.json && node test-build/test/run.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "5.8.3"
+  }
+}
